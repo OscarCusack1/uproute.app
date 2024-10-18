@@ -1,0 +1,139 @@
+<div class="tab">
+    <button class="tablinks" onclick="openTab(event, 'map-container')">Setup</button>
+    {% if optimised_map_html %}
+        {% for optimised_map in optimised_map_html %}
+            <button class="tablinks" onclick="openTab(event, 'optimised-map-container-{{ forloop.counter }}')">Route {{ forloop.counter }}</button>
+        {% endfor %}
+    {% endif %}
+</div>
+<div id="map-container" class="tabcontent">
+    {{ map_html|safe }}
+</div>
+<div id="optimised-map-container">
+    {% if optimised_map_html %}
+    {% for optimised_map in optimised_map_html %}
+        <div id="optimised-map-container-{{ forloop.counter }}" class="tabcontent">
+            <div class="route-info">
+                <div class="map-header">
+                    <div class="routes-container">
+                        {% for vehicle in optimised_map.vehicles %}
+                            <div class="flex-item">
+                                <strong>Vehicle {{ forloop.counter }}</strong>
+                                <ul>
+                                    <li> 
+                                        {{ vehicle.total_duration|floatformat:0 }}
+                                        {% if 1.5 <= vehicle.total_duration or vehicle.total_duration < 0.5 %}
+                                        minutes
+                                        {% else %}
+                                        minute
+                                        {% endif %}
+                                    </li>
+                                    <li>{{ vehicle.total_stops }} stops</li>
+                                    {% if optimised_map.optimised_route.use_demand %}
+                                        <li>{{ vehicle.total_demand }} / {{ vehicle.capacity }} capacity</li>
+                                    {% endif %}
+                                    {% if optimised_map.optimised_route.use_time_window %}
+                                        <li>Shift start: {{ vehicle.start_time }}</li>
+                                        <li>Depart time: {{ vehicle.depart_time }}</li>
+                                        <li>Shift end: {{ vehicle.end_time }}</li>
+                                        <li>Arrival time: {{ vehicle.arrival_time }}</li>
+                                    {% endif %}
+                                </ul>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    <button class="delete-route-button" 
+                        hx-post="{% url 'delete_optimised_route' optimised_map.optimised_route.id %}"
+                        hx-confirm="Are you sure you want to delete this route?" 
+                        hx-target="#outerMapContainer"
+                        hx-swap="innerHTML">
+                        Delete Route
+                    </button>
+                </div>
+            </div>
+            <div>
+                {{ optimised_map.map_html|safe }}
+            </div>
+        </div>
+    {% endfor %}
+{% endif %}
+</div>
+
+<script>
+    function openTab(evt, tabName) {
+    const tabcontent = document.getElementsByClassName("tabcontent");
+    const tablinks = document.getElementsByClassName("tablinks");
+    for (let i = 0; i < tabcontent.length; i++) {
+        tabcontent[i].style.display = "none";
+    }
+    
+    for (let i = 0; i < tablinks.length; i++) {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+    }
+    document.getElementById(tabName).style.display = "block";
+    evt.currentTarget.className += " active";
+    }
+
+    document.getElementsByClassName('tablinks')[0].click();
+</script>
+
+
+<style>
+
+    .map-header {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .routes-container {
+        display: flex;
+        flex-wrap: nowrap;
+        gap: 0;
+        overflow-x: auto;
+        margin-right: 10px;
+    }
+
+    .flex-item {
+        position: relative;
+        background-color: #ffffffb6;
+        padding: 10px;
+        border-top-left-radius: 5px;
+        border-top-right-radius: 5px;
+        flex: 0 1 auto; /* Grow, shrink, and set a base width */
+        box-sizing: border-box;
+    }
+
+    .flex-item:before {
+        content : "";
+        position: absolute;
+        right    : 0;
+        top     : 12.5%;
+        height  : 75%;
+        width   : 1px;  /* or 100px */
+        border-right: 1px solid navy;
+}
+
+    .flex-item strong {
+        display: block;
+        margin-bottom: 10px;
+    }
+
+    .flex-item ul {
+        list-style-type: none;
+        padding: 0;
+    }
+
+    .flex-item ul li {
+        margin-bottom: 5px;
+    }
+
+    .delete-route-button {
+        background-color: #e7e7e7;
+        color: rgb(28, 28, 48);
+        border: none;
+        border-radius: 5px;
+        padding: 10px;
+        cursor: pointer;
+        align-self: flex-start; /* Ensure the button does not fill the height */
+    }
+</style>

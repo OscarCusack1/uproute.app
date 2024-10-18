@@ -1,0 +1,117 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="sign-in-container" id="api-key-container">
+        <h2>Up Route API keys</h2>
+        <table id="api-keys-table">
+            <tr>
+                <th>Application</th>
+                <th>API Key</th>
+                <th>Action</th>
+            </tr>
+            <tr>
+                <td>
+                    Route
+                </td>
+                <td>
+                    {% if api_key %}
+                        {{ api_key }}
+                    {% endif %}
+                </td>
+                <td>
+                    <button hx-post="{% url 'request_api_key' %}"
+                            hx-swap="none"
+                            type="submit"
+                            class="request-button">
+                            Request New API Key
+                    </button>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div id="popup-message" class="popup-message">
+        API Key has been successfully requested.
+    </div>
+
+    <script>
+        document.addEventListener('htmx:afterRequest', function(event) {
+            if (event.detail.target && event.detail.target.getAttribute('hx-post') === "{% url 'request_api_key' %}") {
+                const popup = document.getElementById('popup-message');
+                popup.style.display = 'block';
+                popup.style.opacity = '1';
+                setTimeout(() => {
+                    popup.style.opacity = '0';
+                    setTimeout(() => {
+                        popup.style.display = 'none';
+                    }, 1000); // Match the transition duration
+                }, 2000); // Display the popup for 2 seconds before fading out
+            }
+        });
+    </script>
+    <style>
+    #api-keys-table {
+        width: 100%;
+        border-collapse: collapse;
+        table-layout: auto; /* Allow the table to adjust column widths automatically */
+    }
+
+    #api-keys-table th, #api-keys-table td {
+        border: 1px solid #ddd;
+        padding-left: 8px;
+        padding-right: 8px;
+        padding-top: 5px;
+        padding-bottom: 5px;
+    }
+
+    #api-keys-table th {
+        background-color: #f2f2f2;
+        text-align: left;
+    }
+
+
+    #api-keys-table td:nth-child(2) {
+        word-break: break-all; /* Ensure long API keys wrap properly */
+        width: 100%;
+    }
+
+    #api-keys-table tr:nth-child(even) {
+        background-color: #f9f9f9;
+    }
+
+    #api-keys-table tr:hover {
+        background-color: #f1f1f1;
+    }
+    .popup-message {
+        display: none;
+        background-color: #52ac55ee;
+        color: white;
+        padding: 10px;
+        border-radius: 5px;
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 1000;
+        opacity: 0; /* Start with opacity 0 */
+        transition: opacity 1s; /* Fade out transition */
+    }
+
+    .request-button {
+        background-color: #69cc76; /* Green background */
+        border: none; /* Remove borders */
+        color: black; /* White text */
+        padding: 5px 10px; /* Some padding */
+        text-align: center; /* Center the text */
+        text-decoration: none; /* Remove underline */
+        display: inline-block; /* Get the element to line up correctly */
+        font-size: 14px; /* Increase font size */
+        margin: 4px 2px; /* Some margin */
+        cursor: pointer; /* Pointer/hand icon */
+        border-radius: 6px; /* Rounded corners */
+        white-space: nowrap; /* Prevent text from wrapping */
+    }
+
+    .request-button:hover {
+        background-color: #4c9154; /* Darker green on hover */
+    }
+    </style>
+{% endblock %}

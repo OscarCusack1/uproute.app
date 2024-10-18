@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <h1>Optimize Your Routes Efficiently</h1>
+        <p>Welcome to our route optimization platform. Here, you can optimize various routes for your vehicles and locations. Our platform provides the following features:</p>
+        <ul>
+            <li><a href="{% url 'address_view' %}">Address Optimization</a></li>
+            <li><a href="{% url 'address_view' %}">Vehicle Optimization</a></li>
+            <li><a href="{% url 'address_view' %}">Start Location Optimization</a></li>
+            <li><a href="{% url 'address_view' %}">End Location Optimization</a></li>
+        </ul>
+        <p>Click on the links above to get started with optimizing your routes.</p>
+</div>
+{% endblock %}

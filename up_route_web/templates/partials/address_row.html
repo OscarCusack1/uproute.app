@@ -1,0 +1,87 @@
+<form id="addressForm" method="post" hx-post="{% url 'address_view' %}" hx-target="#searchBoxContainer-Address" hx-swap="innerHTML">
+    <div id="address-header-wrapper">
+        <h1>Addresses</h1>
+        <div class="text-input-wrapper" id="address-location-input-container">
+            {{ address_form.address }}
+        </div>
+        <button name="addressForm" class="submit-button" type="submit"
+        hx-post="{% url 'add_address' %}"
+        hx-target="#searchBoxContainer-Address"
+        hx-swap="innerHTML">
+        Add Address</button>
+    </div>
+</form>
+
+<div id="addressTableContainer">
+    <table class="modern-table">
+        <thead>
+            <tr>
+                <th>Address</th>
+                {% if use_demand == 'on' %}
+                    <th>Demand</th>
+                {% endif %}
+                {% if use_time_window == 'on' %}
+                    <th>Start</th>
+                    <th>End</th>
+                {% endif %}
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody id="addressTableBody" >
+            {% for address in addresses %}
+            <tr class="address-row" id="address-{{ address.id }}">
+                <td>{{ address.address }}</td>
+                {% if use_demand == 'on' %}
+                <td>
+                    <input type="number" class="demand-input address-input"
+                        value="{{ address.demand }}"
+                        name="demand"
+                        min="0"
+                        hx-post="{% url 'update_demand' address.id %}"
+                        hx-trigger="change"
+                        hx-params="demand"/>
+                </td>
+                {% endif %}
+                {% if use_time_window == 'on' %}
+                    <td>
+                    <input type="time" class="time-window-input address-input"
+                                value="{{ address.window_time_start|date:'H:i' }}"
+                                name="window_time_start"
+                                hx-post="{% url 'update_time_window' address.id %}"
+                                hx-trigger="change"
+                                hx-params="window_time_start"/>
+                    </td>
+                    <td>
+                        <input type="time" class="time-window-input address-input"
+                            value="{{ address.window_time_end|date:'H:i' }}"
+                            name="window_time_end"
+                            hx-post="{% url 'update_time_window' address.id %}"
+                            hx-trigger="change"
+                            hx-params="window_time_end"/>
+                    </td>
+                {% endif %}
+                <td>
+                    <button class="delete-button" hx-delete="{% url 'delete_address' address.id %}" hx-target="#address-{{ address.id }}" hx-swap="outerHTML">X</button>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<style>
+    .demand-input, .time-window-input{
+        width: 60px; /* Adjust the width as needed */
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-size: 14px;
+        transition: border-color 0.3s, box-shadow 0.3s;
+    }
+
+    .demand-input:focus, .time-window-input:focus{
+        border-color: #66afe9;
+        box-shadow: 0 0 8px rgba(102, 175, 233, 0.6);
+        outline: none;
+    }
+</style>
+

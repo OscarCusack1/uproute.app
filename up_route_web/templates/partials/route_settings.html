@@ -1,0 +1,77 @@
+<form id="routeSettingsForm" method="post">
+    <div id="route-header-wrapper">
+        <div id="route-params-div">
+            {% for field in route_form %}
+                <div class="check-box-div">
+                    {{ field }}{{ field.label  }}
+                </div>
+            {% endfor %}
+        </div>
+        <button id="job-submit-button" name="routeSettingsForm" class="submit-button" type="submit"
+        hx-post="{% url 'send_optimisation_request' %}"
+        hx-target="#outerMapContainer"
+        hx-swap="innerHTML"
+        hx-trigger="click"
+        >Submit</button>
+    </div>
+</form>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const checkboxes = document.querySelectorAll('#route-params-div input[type="checkbox"]');
+
+        checkboxes.forEach(function(checkbox) {
+            checkbox.addEventListener('change', function() {
+                const params = new URLSearchParams();
+                checkboxes.forEach(function(cb) {
+                    if (cb.checked) {
+                        params.append(cb.name, cb.value);
+                    }
+                });
+
+                fetch("{% url 'update_address_table' %}?" + params.toString(), {
+                    method: 'GET',
+                    headers: {
+                        'HX-Request': 'true'
+                    }
+                })
+                .then(response => response.text())
+                .then(html => {
+                    document.getElementById('searchBoxContainer-Address').innerHTML = html;
+                    console.log("htmx process for searchBoxContainer-Address");
+                    htmx.process(document.getElementById('searchBoxContainer-Address'));
+                })
+                .catch(error => console.error('Error:', error));
+
+                fetch("{% url 'update_vehicle_table' %}?" + params.toString(), {
+                    method: 'GET',
+                    headers: {
+                        'HX-Request': 'true'
+                    }
+                })
+                .then(response => response.text())
+                .then(html => {
+                    document.getElementById('vehicleTableContainer').innerHTML = html;
+                    console.log("htmx process for vehicleTableContainer");
+                    htmx.process(document.getElementById('vehicleTableContainer'));
+                })
+                .catch(error => console.error('Error:', error));
+
+                fetch("{% url 'update_depot_table' %}?" + params.toString(), {
+                    method: 'GET',
+                    headers: {
+                        'HX-Request': 'true'
+                    }
+                })
+                .then(response => response.text())
+                .then(html => {
+                    document.getElementById('depotTableContainer').innerHTML = html;
+                    console.log("htmx process for depotTableContainer");
+                    htmx.process(document.getElementById('depotTableContainer'));
+                    bingMapsReady();
+                })
+                .catch(error => console.error('Error:', error));
+            });
+        });
+    });
+</script>

@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <div id='addressContainer'>
+        <div id='addressInnerContainer'>
+            <div class='searchBoxContainer'>
+                <h1>Route Parameters</h1>
+                {% include 'partials/route_settings.html' with route_form=route_form%}
+            </div>
+            <div class='searchBoxContainer'>
+                <h1>Depot</h1>
+                <div id="depotTableContainer">
+                    {% include 'partials/depot_table.html'%}
+                </div>
+            </div>
+            <div class='searchBoxContainer'>
+                <div id="vehicle-header-wrapper">
+                    <h1>Vehicles</h1>
+                    <button id="create-vehicle-button" class="submit-button"
+                    hx-post="{% url 'add_vehicle' %}"
+                    hx-target="#vehicleTableContainer"
+                    hx-swap="innerHTML"
+                    hx-trigger="click"
+                    hx-indicator="dots">
+                    Add Vehicle</button>
+                </div>
+                <div id="vehicleTableContainer">
+                    {% include 'partials/vehicles_table.html'%}
+                </div>
+            </div>
+            <div class='searchBoxContainer' id="searchBoxContainer-Address">
+                {% include 'partials/address_row.html' with address_form=address_form %}
+            </div>
+        </div>
+    </div>
+    <div id='outerMapContainer'>
+        {% include 'partials/optimised_tab.html' with optimised_map_html=optimised_map_html  map_html=map_html  %}
+    </div>
+</div>
+
+<script>
+    // Call updateMap to initialize the map on page load
+// document.addEventListener('DOMContentLoaded', updateMap);
+
+document.body.addEventListener('htmx:afterRequest', function(evt) {
+  console.log('htmx:afterRequest event fired');
+
+    if (evt.detail.target.tagName === 'TR' && evt.detail.target.className === 'address-row') {
+        console.log("Address TR actioned");
+        updateMap();
+    }
+    else if (evt.detail.target.classList.contains('address-input')) {
+        console.log("Address input actioned");
+        updateMap();
+    }
+    else if (evt.detail.target.tagName === 'DIV' && evt.detail.target.id === 'addressTableContainer') {
+        console.log("Address DIV actioned");
+        updateMap();
+    }
+    else if (evt.detail.target.tagName === 'DIV' && evt.detail.target.id === 'vehicleTableContainer') {
+        console.log("Vehicle DIV actioned");
+        updateMap();
+    }
+    // else if (evt.detail.target.tagName === 'DIV' && evt.detail.target.id === 'depotTableContainer') {
+    //     console.log("Depot DIV actioned");
+    //     updateMap();
+        
+    // }
+});
+</script>
+{% endblock %}

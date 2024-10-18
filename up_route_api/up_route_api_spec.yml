@@ -1,0 +1,96 @@
+openapi: 3.0.0
+info:
+  title: Flask API
+  version: 1.0.0
+  description: API for route optimization
+
+paths:
+  /test:
+    get:
+      summary: Test endpoint
+      description: Returns a ping message
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: ping
+
+  /optimise_route:
+    post:
+      summary: Optimize route
+      description: Optimizes the route based on provided locations and vehicles
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                locations:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      address:
+                        type: string
+                      demand:
+                        type: integer
+                        default: 0
+                      window_start:
+                        type: string
+                      window_end:
+                        type: string
+                vehicles:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      start_time:
+                        type: string
+                      end_time:
+                        type: string
+                start_location:
+                  type: object
+                  properties:
+                    address:
+                      type: string
+                    window_start:
+                      type: string
+                    window_end:
+                      type: string
+                end_location:
+                  type: object
+                  properties:
+                    address:
+                      type: string
+                    window_start:
+                      type: string
+                    window_end:
+                      type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Route optimized
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: No locations provided

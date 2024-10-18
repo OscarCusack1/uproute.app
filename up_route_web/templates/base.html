@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Up Route</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
+    <script
+        type="text/javascript"
+        src="https://www.bing.com/api/maps/mapcontrol?key={{ BING_MAPS_API_KEY }}&callback=bingMapsReady"
+        async
+        defer
+    ></script>
+    <script type='text/javascript' src='{% static "js/address_autocomplete.js" %}'></script>
+    <script src="https://unpkg.com/htmx.org@1.6.1"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <script>
+        // Configure HTMX to include the CSRF token in the headers
+        document.addEventListener("htmx:configRequest", (event) => {
+            event.detail.headers['X-CSRFToken'] = '{{ csrf_token }}';
+            console.log('htmx:configRequest event fired');
+        });
+    </script>
+</head>
+<body>
+    <script>0</script>
+    <div class="navbar">
+        <div class="nav-left">
+            <a href="{% url 'address_view' %}">Home</a>
+            <a href="{% url 'address_view' %}">Route</a>
+        </div>
+        <div class="nav-right">
+            <div class="dropdown">
+                <a href="javascript:void(0)">Account</a>
+                <div class="dropdown-content">
+                    <a href="{% url 'api_key_view' %}">API keys</a>
+                    <a href="{% url 'change_password' %}">Change Password</a>
+                    <a href="{% url 'logout' %}">Logout</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Your page content goes here -->
+    <div class="content">
+        {% block content %}
+        {% endblock %}
+    </div>
+</body>
+</html>

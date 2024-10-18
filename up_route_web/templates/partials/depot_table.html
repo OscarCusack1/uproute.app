@@ -1,0 +1,76 @@
+<table class="modern-table">
+    <thead>
+        <tr>
+            <th>Location</th>
+            {% if use_time_window == 'on' %}
+                <th>Start</th>
+                <th>End</th>
+            {% endif %}
+        </tr>
+    </thead>
+    <tbody id="addressTableBody" >
+        <tr class="address-row" id="start-location">
+            <td>
+                <div class="text-input-wrapper" id="start-location-input-container">
+                    <input type="text" class="address-input" id="start-location-input"
+                            {% if start_location.address %} value="{{ start_location.address }}" {% endif %}
+                            placeholder="Enter start location address"
+                            name="address"
+                            hx-post="{% url 'update_start_address' start_location.id %}"
+                            hx-trigger="change"
+                            hx-action="alert('hello')"
+                            hx-params="address"/>
+                </div>
+            </td>
+            {% if use_time_window == 'on' %}
+                <td>
+                    <input type="time" class="time-window-input address-input"
+                                value="{{ start_location.start_time|date:'H:i' }}"
+                                name="start_time"
+                                hx-post="{% url 'update_start_location_time_window' start_location.id %}"
+                                hx-trigger="change"
+                                hx-params="start_time"/>
+                </td>
+                <td>
+                    <input type="time" class="time-window-input address-input"
+                        value="{{ start_location.end_time|date:'H:i' }}"
+                        name="end_time"
+                        hx-post="{% url 'update_start_location_time_window' start_location.id %}"
+                        hx-trigger="change"
+                        hx-params="end_time"/>
+                </td>
+            {% endif %}
+        </tr>
+        <tr class="address-row" id="end-location"></tr>
+            <td>
+                <div class="text-input-wrapper" id="end-location-input-container">
+                    <input type="text" class="address-input"  id="end-location-input"
+                            {% if end_location.address %} value="{{ end_location.address }}" {% endif %}
+                            placeholder="Enter finish location address"
+                            name="address"
+                            hx-post="{% url 'update_end_address' end_location.id %}"
+                            hx-trigger="change"
+                            hx-params="address"/>
+                </div>
+            </td>
+            {% if use_time_window == 'on' %}
+                <td>
+                <input type="time" class="time-window-input address-input"
+                            value="{{ end_location.start_time|date:'H:i' }}"
+                            name="start_time"
+                            hx-post="{% url 'update_end_location_time_window' end_location.id %}"
+                            hx-trigger="change"
+                            hx-params="start_time"/>
+                </td>
+                <td>
+                    <input type="time" class="time-window-input address-input"
+                        value="{{ end_location.end_time|date:'H:i' }}"
+                        name="end_time"
+                        hx-post="{% url 'update_end_location_time_window' end_location.id %}"
+                        hx-trigger="change"
+                        hx-params="end_time"/>
+                </td>
+            {% endif %}
+        </tr>
+    </tbody>
+</table>

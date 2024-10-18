@@ -1,0 +1,54 @@
+<table class="modern-table">
+    <thead>
+        <tr>
+            <th>Vehicle</th>
+            {% if use_demand == 'on' %}
+                <th>Capacity</th>
+            {% endif %}
+            {% if use_time_window == 'on' %}
+                <th>Start</th>
+                <th>End</th>
+            {% endif %}
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody id="addressTableBody" >
+        {% for vehicle in vehicles %}
+        <tr class="address-row" id="vehicle-{{ vehicle.id }}">
+            <td>{{ vehicle.id }}</td>
+            {% if use_demand == 'on' %}
+            <td>
+                <input type="number" class="demand-input address-input"
+                    value="{{ vehicle.capacity }}"
+                    name="capacity"
+                    hx-post="{% url 'update_capacity' vehicle.id %}"
+                    min="0"
+                    hx-trigger="change"
+                    hx-params="capacity"/>
+            </td>
+            {% endif %}
+            {% if use_time_window == 'on' %}
+                <td>
+                <input type="time" class="time-window-input address-input"
+                            value="{{ vehicle.start_time|date:'H:i' }}"
+                            name="start_time"
+                            hx-post="{% url 'update_vehicle_time_window' vehicle.id %}"
+                            hx-trigger="change"
+                            hx-params="start_time"/>
+                </td>
+                <td>
+                    <input type="time" class="time-window-input address-input"
+                        value="{{ vehicle.end_time|date:'H:i' }}"
+                        name="end_time"
+                        hx-post="{% url 'update_vehicle_time_window' vehicle.id %}"
+                        hx-trigger="change"
+                        hx-params="end_time"/>
+                </td>
+            {% endif %}
+            <td>
+                <button class="delete-button" hx-delete="{% url 'delete_vehicle' vehicle.id %}" hx-target="#vehicle-{{ vehicle.id }}" hx-swap="outerHTML">X</button>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>

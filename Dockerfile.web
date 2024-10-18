@@ -1,0 +1,45 @@
+# Use an official Python runtime as a parent image
+FROM python:3.12-slim
+
+# Set the working directory in the container
+WORKDIR /usr/src/app
+
+# set environment variables
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
+
+# install system dependencies
+RUN apt-get update && apt-get install -y netcat-traditional
+
+# install dependencies
+RUN pip install --upgrade pip
+COPY ./up_route_web_app/requirements.txt .
+RUN pip install -r requirements.txt
+
+# copy entrypoint.sh
+COPY ./entrypoint.sh .
+RUN sed -i 's/\r$//g' /usr/src/app/entrypoint.sh
+RUN chmod +x /usr/src/app/entrypoint.sh
+
+# Copy the current directory contents into the container
+COPY ./up_route_web_app .
+
+# create the appropriate directories
+# ENV HOME=/home/app
+# ENV APP_HOME=/home/app/web
+# RUN mkdir $APP_HOME
+# RUN mkdir $APP_HOME/staticfiles
+# WORKDIR $APP_HOME
+
+ENTRYPOINT ["sh", "/usr/src/app/entrypoint.sh"]
+
+# Define environment variable
+# ENV DJANGO_SETTINGS_MODULE=up_route_web_app.settings
+
+# ENTRYPOINT ["sh", "/usr/src/app/entrypoint_web_app.sh"]
+
+# # Collect static files
+# RUN python manage.py collectstatic --noinput
+
+# # Run the Django development server
+# CMD ["gunicorn", "--bind", "0.0.0.0:8000", "up_route_web_app.wsgi:application"]
